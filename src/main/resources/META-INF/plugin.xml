@@ -1,18 +1,39 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
     <id>com.github.notanelephant.codingbuddyplugin</id>
-    <name>coding-buddy-plugin Template</name>
-    <vendor>notanelephant</vendor>
+    <name>Coding Buddy</name>
+    <vendor>notAnElephant</vendor>
 
     <depends>com.intellij.modules.platform</depends>
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
+        <toolWindow factoryClass="com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory"
+                    id="MyToolWindow"/>
     </extensions>
 
     <applicationListeners>
-        <listener class="com.github.notanelephant.codingbuddyplugin.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
+        <listener class="com.github.notanelephant.codingbuddyplugin.listeners.MyApplicationActivationListener"
+                  topic="com.intellij.openapi.application.ApplicationActivationListener"/>
     </applicationListeners>
+    <actions>
+        <group
+                id="com.github.notanelephant.codingbuddyplugin.actions"
+                text="Coding Buddy"
+                popup="true"
+                icon="AllIcons.Ide.Rating"
+                compact="false">
+            <add-to-group group-id="EditorPopupMenu" anchor="after"
+                          relative-to-action="com.github.notanelephant.codingbuddyplugin.actions"/>
+
+            <action id="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"
+                    class="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"
+                    text="Refactor Selected Code"
+                    description="Refactors the selected code">
+
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt L" />
+            </action>
+        </group>
+    </actions>
 </idea-plugin>
