@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.ui.Messages
 
 
-class RefactorAction : AnAction() {
+class UnitTestsAction : AnAction() {
     override fun actionPerformed(event: AnActionEvent) {
 
         val currentProject = event.project

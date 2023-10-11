@@ -34,6 +34,12 @@
 
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt L" />
             </action>
+            <action id="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction"
+                    class="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction" text="Generate Unit Tests"
+                    description="Generates unit tests"/>
+            <action id="com.github.notanelephant.codingbuddyplugin.actions.ExplainAction"
+                    class="com.github.notanelephant.codingbuddyplugin.actions.ExplainAction" text="Explain Selected Code"
+                    description="Explains the selected code part"/>
         </group>
     </actions>
 </idea-plugin>
