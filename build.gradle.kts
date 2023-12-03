@@ -11,11 +11,18 @@ plugins {
     alias(libs.plugins.changelog) // Gradle Changelog Plugin
     alias(libs.plugins.qodana) // Gradle Qodana Plugin
     alias(libs.plugins.kover) // Gradle Kover Plugin
+
+    kotlin("plugin.serialization")
 }
 
 group = properties("pluginGroup").get()
 version = properties("pluginVersion").get()
 
+val ktorVersion = "2.3.5"
+val okioVersion = "3.6.0"
+val okhttpVersion = "4.11.0"
+
+val kotlinVersion: String by project
 // Configure project's dependencies
 repositories {
     mavenCentral()
@@ -24,6 +31,26 @@ repositories {
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
 //    implementation(libs.annotations)
+    // Jetbrains
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.0")
+
+    // Ktor
+    implementation("io.ktor:ktor-client-auth:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-logging:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
+    // External
+    implementation("com.squareup.okio:okio:$okioVersion") //default //TODO ez vszeg kell, de akkor is ugyanígy hal el, ha kiveszem
+    //implementation("com.squareup.okhttp3:okhttp:$okhttpVersion") //okhttp (idk why/where)
+    //implementation("io.ktor:ktor-client-okhttp:$ktorVersion") //from the another wrapper
+    //implementation("io.ktor:ktor-client-java:2.3.6") //from the GitHub issue
+    implementation("io.ktor:ktor-client-cio:$ktorVersion") ///<-- this one works
+    
+    implementation("org.slf4j:slf4j-simple:2.0.6")
 }
 
 // Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
