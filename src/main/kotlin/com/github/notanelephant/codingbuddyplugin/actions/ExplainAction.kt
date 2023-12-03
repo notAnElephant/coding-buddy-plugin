@@ -25,7 +25,7 @@ class ExplainAction : AnAction() {
            val result = Messages.showOkCancelDialog(
                 currentProject,
                 message.toString(),
-                "Refactor Action",
+                "Explain Action",
                 "OK",
                 "Cancel",
                 Messages.getInformationIcon()
@@ -41,12 +41,20 @@ class ExplainAction : AnAction() {
 
                 //call in a coroutine
                 runBlocking {
-                        completionsApiExample(openAI, it)
+                        val responseText = completionsApiExample(openAI, it)
+                        Messages.showOkCancelDialog(
+                            currentProject,
+                            responseText,
+                            "Explain Action",
+                            "OK",
+                            "Cancel",
+                            Messages.getInformationIcon()
+                        )
                 }
             }
         }
     }
-    private suspend fun completionsApiExample(openAI: OpenAIClient, code: String) {
+    private suspend fun completionsApiExample(openAI: OpenAIClient, code: String) : String {
         val model = GPT3Model.DAVINCI.modelName
         val prompt = "Explain the given code part: $code"
         val createCompletionResponse =
@@ -59,29 +67,8 @@ class ExplainAction : AnAction() {
                 ),
             )
 
-        val output = createCompletionResponse.choices.joinToString("\n") { it.text }.trim()
-
-        printOutput(
-            "CreateCompletion (/completions)",
-            model,
-            prompt,
-            "Creates a completion for the provided prompt",
-            output,
-        )
+        return createCompletionResponse.choices.joinToString("\n") { it.text }.trim()
     }
-
-    private fun printOutput(
-        api: String,
-        model: String,
-        input: String,
-        task: String,
-        output: String,
-    ) {
-        println("Calling the $api API with the model $model...")
-        println("Input: $input\nTask: $task\nOutput:\n$output".trimEnd())
-        println("====================================================================================================\n")
-    }
-
     override fun update(event: AnActionEvent) {
         super.update(event)
 
