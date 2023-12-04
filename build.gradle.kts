@@ -18,7 +18,7 @@ plugins {
 group = properties("pluginGroup").get()
 version = properties("pluginVersion").get()
 
-val ktorVersion = "2.3.5"
+val ktorVersion = "2.3.6"
 val okioVersion = "3.6.0"
 val okhttpVersion = "4.11.0"
 
