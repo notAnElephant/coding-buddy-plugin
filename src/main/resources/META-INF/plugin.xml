@@ -18,7 +18,7 @@
                   topic="com.intellij.openapi.application.ApplicationActivationListener"/>
     </applicationListeners>
     <actions>
-<!--        In-file actions-->
+        <!--        In-file actions-->
         <group
                 id="com.github.notanelephant.codingbuddyplugin.infileactions"
                 text="Coding Buddy"
@@ -27,22 +27,28 @@
                 compact="false">
             <add-to-group group-id="EditorPopupMenu" anchor="after"
                           relative-to-action="com.github.notanelephant.codingbuddyplugin.infileactions"/>
-            
+
             <action id="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"
                     class="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"
                     text="Refactor Selected Code"
                     description="Refactors the selected code">
 
-                <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt L" />
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt L"/>
             </action>
             <action id="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction"
-                    class="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction" text="Generate Unit Tests"
+                    class="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction"
+                    text="Generate Unit Tests"
                     description="Generates unit tests"/>
             <action id="com.github.notanelephant.codingbuddyplugin.actions.ExplainAction"
-                    class="com.github.notanelephant.codingbuddyplugin.actions.ExplainAction" text="Explain Selected Code"
+                    class="com.github.notanelephant.codingbuddyplugin.actions.ExplainAction"
+                    text="Explain Selected Code"
                     description="Explains the selected code part"/>
+            <action id="com.github.notanelephant.codingbuddyplugin.actions.TodoAction"
+                    class="com.github.notanelephant.codingbuddyplugin.actions.TodoImplementAction"
+                    text="Implement TODOAI comments"
+                    description="Implements the TODOAI comments&#39; description in the selected code"/>
         </group>
-<!--        Project window actions-->
+        <!--        Project window actions-->
         <group
                 id="com.github.notanelephant.codingbuddyplugin.editorgroupactions"
                 text="Coding Buddy"
@@ -51,17 +57,19 @@
                 compact="false">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
                           relative-to-action="com.github.notanelephant.codingbuddyplugin.editorgroupactions"/>
-
-<!--            <action id="com.github.notanelephant.codingbuddyplugin.actions.RefactorActionProjectWindow"-->
-<!--                    class="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"-->
-<!--                    text="Refactor Selected Code"-->
-<!--                    description="Refactors the selected code">-->
-<!--            </action>-->
+            <!--TODO-->
+            <!--            <action id="com.github.notanelephant.codingbuddyplugin.actions.RefactorActionProjectWindow"-->
+            <!--                    class="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"-->
+            <!--                    text="Refactor Selected Code"-->
+            <!--                    description="Refactors the selected code">-->
+            <!--            </action>-->
             <action id="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsActionProjectWindow"
-                    class="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction" text="Generate Unit Tests"
+                    class="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction"
+                    text="Generate Unit Tests"
                     description="Generates unit tests"/>
             <action id="com.github.notanelephant.codingbuddyplugin.actions.ExplainActionProjectWindow"
-                    class="com.github.notanelephant.codingbuddyplugin.actions.ExplainAction" text="Explain Selected Code"
+                    class="com.github.notanelephant.codingbuddyplugin.actions.ExplainAction"
+                    text="Explain Selected Code"
                     description="Explains the selected code part"/>
         </group>
     </actions>
