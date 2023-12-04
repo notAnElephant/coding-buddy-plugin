@@ -18,15 +18,16 @@
                   topic="com.intellij.openapi.application.ApplicationActivationListener"/>
     </applicationListeners>
     <actions>
+<!--        In-file actions-->
         <group
-                id="com.github.notanelephant.codingbuddyplugin.actions"
+                id="com.github.notanelephant.codingbuddyplugin.infileactions"
                 text="Coding Buddy"
                 popup="true"
                 icon="AllIcons.Ide.Rating"
                 compact="false">
             <add-to-group group-id="EditorPopupMenu" anchor="after"
-                          relative-to-action="com.github.notanelephant.codingbuddyplugin.actions"/>
-
+                          relative-to-action="com.github.notanelephant.codingbuddyplugin.infileactions"/>
+            
             <action id="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"
                     class="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"
                     text="Refactor Selected Code"
@@ -38,6 +39,28 @@
                     class="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction" text="Generate Unit Tests"
                     description="Generates unit tests"/>
             <action id="com.github.notanelephant.codingbuddyplugin.actions.ExplainAction"
+                    class="com.github.notanelephant.codingbuddyplugin.actions.ExplainAction" text="Explain Selected Code"
+                    description="Explains the selected code part"/>
+        </group>
+<!--        Project window actions-->
+        <group
+                id="com.github.notanelephant.codingbuddyplugin.editorgroupactions"
+                text="Coding Buddy"
+                popup="true"
+                icon="AllIcons.Ide.Rating"
+                compact="false">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
+                          relative-to-action="com.github.notanelephant.codingbuddyplugin.editorgroupactions"/>
+
+<!--            <action id="com.github.notanelephant.codingbuddyplugin.actions.RefactorActionProjectWindow"-->
+<!--                    class="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"-->
+<!--                    text="Refactor Selected Code"-->
+<!--                    description="Refactors the selected code">-->
+<!--            </action>-->
+            <action id="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsActionProjectWindow"
+                    class="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction" text="Generate Unit Tests"
+                    description="Generates unit tests"/>
+            <action id="com.github.notanelephant.codingbuddyplugin.actions.ExplainActionProjectWindow"
                     class="com.github.notanelephant.codingbuddyplugin.actions.ExplainAction" text="Explain Selected Code"
                     description="Explains the selected code part"/>
         </group>
