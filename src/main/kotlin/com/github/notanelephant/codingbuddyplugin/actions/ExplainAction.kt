@@ -1,11 +1,10 @@
 package com.github.notanelephant.codingbuddyplugin.actions
 
+import com.github.notanelephant.codingbuddyplugin.ApiCall.Companion.getApiResponse
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
-import com.github.notanelephant.codingbuddyplugin.wrapper.GPT3Model
 import com.github.notanelephant.codingbuddyplugin.wrapper.HttpTimeout
 import com.github.notanelephant.codingbuddyplugin.wrapper.OpenAIClient
 import com.github.notanelephant.codingbuddyplugin.wrapper.OpenAIClientConfig
-import com.github.notanelephant.codingbuddyplugin.wrapper.completions.CreateCompletionRequest
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -58,13 +57,9 @@ class ExplainAction : AnAction() {
                     if (it is JBScrollPane) {
                         val textArea = it.viewport.view as JTextArea
                         
-                        ApplicationManager.getApplication().invokeLater {
-                            textArea.text = selectedText
-                        }
-
                         // perform the API call on a background thread
                         GlobalScope.launch(Dispatchers.IO) {
-                            val explanation = completionsApiExample(openAI, selectedText)
+                            val explanation = getApiResponse(openAI, "Explain this code briefly", selectedText)
                             ApplicationManager.getApplication().invokeLater {
                                 textArea.text = explanation
                             }
@@ -76,21 +71,6 @@ class ExplainAction : AnAction() {
         }
     }
 
-    private suspend fun completionsApiExample(openAI: OpenAIClient, code: String): String {
-        val model = GPT3Model.DAVINCI.modelName
-        val prompt = "Explain the given code part: $code"
-        val createCompletionResponse =
-            openAI.createCompletion(
-                CreateCompletionRequest(
-                    model = model,
-                    prompt = prompt,
-                    maxTokens = 1000,
-                    temperature = 0.7,
-                ),
-            )
-
-        return createCompletionResponse.choices.joinToString("\n") { it.text }.trim()
-    }
     override fun update(event: AnActionEvent) {
         super.update(event)
 
