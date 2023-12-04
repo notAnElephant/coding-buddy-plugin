@@ -1,9 +1,9 @@
 package com.github.notanelephant.codingbuddyplugin.services
 
+import com.github.notanelephant.codingbuddyplugin.MyBundle
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.project.Project
-import com.github.notanelephant.codingbuddyplugin.MyBundle
 
 @Service(Service.Level.PROJECT)
 class MyProjectService(project: Project) {
@@ -14,4 +14,9 @@ class MyProjectService(project: Project) {
     }
 
     fun getRandomNumber() = (1..100).random()
+    
+    fun getCodeExplanation(code: String) : String {
+        //TODO call the OpenAI API to get the explanation
+        return "TODO"
+    }
 }
