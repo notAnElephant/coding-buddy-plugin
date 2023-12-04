@@ -50,7 +50,7 @@ dependencies {
     //implementation("io.ktor:ktor-client-java:2.3.6") //from the GitHub issue
     implementation("io.ktor:ktor-client-cio:$ktorVersion") ///<-- this one works
     
-    implementation("org.slf4j:slf4j-simple:2.0.6")
+    implementation("org.slf4j:slf4j-simple:2.0.9")
 }
 
 // Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
