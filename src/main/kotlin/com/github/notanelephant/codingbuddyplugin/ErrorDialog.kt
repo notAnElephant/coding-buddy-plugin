@@ -6,7 +6,7 @@ import com.intellij.openapi.ui.Messages
 class ErrorDialog private constructor(private val project: Project?, private val message: String) {
 
     fun show() {
-        Messages.showErrorDialog(project!!, message, "Unexpected error")
+        Messages.showErrorDialog(project!!, message, "Unexpected Error")
     }
     companion object {
         fun show(project: Project?, message: String) {
