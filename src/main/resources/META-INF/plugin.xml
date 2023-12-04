@@ -11,12 +11,15 @@
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory"
                     id="Coding Buddy" icon="AllIcons.Ide.Rating"/>
+        <annotator implementationClass="com.github.notanelephant.codingbuddyplugin.annotators.TodoAnnotator" language=""/>
+        <applicationService
+                serviceImplementation="com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState"/>
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.github.notanelephant.codingbuddyplugin.settings.AppSettingsConfigurable"
+                id="com.github.notanelephant.codingbuddyplugin.settings.AppSettingsConfigurable"
+                displayName="Coding Buddy"/>
     </extensions>
-
-    <applicationListeners>
-        <listener class="com.github.notanelephant.codingbuddyplugin.listeners.MyApplicationActivationListener"
-                  topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
     <actions>
         <!--        In-file actions-->
         <group

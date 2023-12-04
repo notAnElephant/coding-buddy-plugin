@@ -38,8 +38,8 @@ class RefactorAction : AnAction() {
                            "a part of a working code. The code: ", it)
                    
                    if(refactoredCode == "cannot be refactored"){
-                       Messages.showInfoMessage("The code cannot be refactored. The selection is probably too short -" +
-                               " try selecting more of it.", "Refactor Action")
+                       Messages.showInfoMessage("The code cannot be refactored. The selection is probably " +
+                               "too short - try selecting more of it.", "Refactor Action")
                        return@launch
                    }
                    // Replace the selected code in the editor

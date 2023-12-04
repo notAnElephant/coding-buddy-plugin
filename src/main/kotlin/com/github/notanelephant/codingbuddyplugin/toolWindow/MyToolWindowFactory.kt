@@ -35,6 +35,7 @@ class MyToolWindowFactory : ToolWindowFactory {
         private val textArea: JTextArea = JTextArea(MyBundle.message("placeholder" )).apply {
             lineWrap = true
             wrapStyleWord = true
+            isEditable = false
         }
 
         fun getContent() = JBPanel<JBPanel<*>>().apply {
