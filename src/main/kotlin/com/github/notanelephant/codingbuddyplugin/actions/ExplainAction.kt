@@ -31,7 +31,7 @@ class ExplainAction : AnAction() {
             return
         }
 
-        val toolWindowId = "MyToolWindow"
+        val toolWindowId = "Coding Buddy"
         
         val message: StringBuilder = StringBuilder(event.presentation.text + " Selected!")
         val editor = CommonDataKeys.EDITOR.getData(event.dataContext)

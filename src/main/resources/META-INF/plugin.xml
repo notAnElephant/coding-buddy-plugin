@@ -10,7 +10,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory"
-                    id="MyToolWindow"/>
+                    id="Coding Buddy" icon="AllIcons.Ide.Rating"/>
     </extensions>
 
     <applicationListeners>
