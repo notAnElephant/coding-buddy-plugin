@@ -44,11 +44,8 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
     // External
-    implementation("com.squareup.okio:okio:$okioVersion") //default //TODO ez vszeg kell, de akkor is ugyanígy hal el, ha kiveszem
-    //implementation("com.squareup.okhttp3:okhttp:$okhttpVersion") //okhttp (idk why/where)
-    //implementation("io.ktor:ktor-client-okhttp:$ktorVersion") //from the another wrapper
-    //implementation("io.ktor:ktor-client-java:2.3.6") //from the GitHub issue
-    implementation("io.ktor:ktor-client-cio:$ktorVersion") ///<-- this one works
+    implementation("com.squareup.okio:okio:$okioVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
     
     implementation("org.slf4j:slf4j-simple:2.0.6")
 }

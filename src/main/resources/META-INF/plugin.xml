@@ -48,7 +48,7 @@
                     description="Explains the selected code part"/>
             <action id="com.github.notanelephant.codingbuddyplugin.actions.TodoAction"
                     class="com.github.notanelephant.codingbuddyplugin.actions.TodoImplementAction"
-                    text="Implement TODOAI comments"
+                    text="Implement TODO Comments"
                     description="Implements the TODOAI comments&#39; description in the selected code"/>
         </group>
         <!--        Project window actions-->
@@ -60,12 +60,11 @@
                 compact="false">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
                           relative-to-action="com.github.notanelephant.codingbuddyplugin.editorgroupactions"/>
-            <!--TODO-->
-            <!--            <action id="com.github.notanelephant.codingbuddyplugin.actions.RefactorActionProjectWindow"-->
-            <!--                    class="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"-->
-            <!--                    text="Refactor Selected Code"-->
-            <!--                    description="Refactors the selected code">-->
-            <!--            </action>-->
+                        <action id="com.github.notanelephant.codingbuddyplugin.actions.RefactorActionProjectWindow"
+                                class="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"
+                                text="Refactor Selected Code"
+                                description="Refactors the selected code">
+                        </action>
             <action id="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsActionProjectWindow"
                     class="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction"
                     text="Generate Unit Tests"
