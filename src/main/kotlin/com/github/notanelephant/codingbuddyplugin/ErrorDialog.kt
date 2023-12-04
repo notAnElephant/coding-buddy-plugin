@@ -14,10 +14,3 @@ class ErrorDialog private constructor(private val project: Project?, private val
         }
     }
 }
-
-// Example usage:
-// ErrorDialog.show(currentProject, "An error occurred.")
-
-
-// Example usage:
-// ErrorDialog(currentProject, "An error occurred.").show()

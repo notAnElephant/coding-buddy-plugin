@@ -1,48 +1,124 @@
 package com.github.notanelephant.codingbuddyplugin.actions
 
-import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.github.notanelephant.codingbuddyplugin.ApiCall
+import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.vfs.VirtualFile
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class UnitTestsAction : AnAction() {
+    private var classImplementation: String = ""
+    private var className: String? = ""
+
+    @OptIn(DelicateCoroutinesApi::class)
     override fun actionPerformed(event: AnActionEvent) {
 
-        val currentProject = event.project
-        val message: StringBuilder = StringBuilder(event.presentation.text + " Selected!")
-        val editor = CommonDataKeys.EDITOR.getData(event.dataContext)
+        val currentProject = event.project ?: run {
+            ErrorDialog.show(null, "No project found")
+            return
+        }
+        if (className?.isBlank() == true || classImplementation.isBlank()) {
+            ErrorDialog.show(currentProject, "No non-empty class found in the file")
+            return
+        }
 
-        editor?.selectionModel?.selectedText?.let {
-           val result = Messages.showOkCancelDialog(
-                currentProject,
-                message.toString(),
-                "Refactor Action",
-                "OK",
-                "Cancel",
-                Messages.getInformationIcon()
-            )
-            if (result == Messages.OK) {
-                //TODO send data to server
-            
+        val result = Messages.showOkCancelDialog(
+            currentProject,
+            "Are you sure you want to generate unit tests for the following class: $className?",
+            "Unit Test Action",
+            "OK",
+            "Cancel",
+            Messages.getInformationIcon()
+        )
+        if (result == Messages.OK) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val unitTest = ApiCall.getApiResponse(
+                    "Write unit tests for the following code. The class name should be " +
+                            "${className}UnitTests", classImplementation)
+
+                // Get the source file's virtual file
+                val sourceFile = event.getData(LangDataKeys.VIRTUAL_FILE)
+
+                // Check if the source file is not null
+                sourceFile?.let {
+                    val testsFileName = "${className}UnitTests.${it.extension}"
+
+                    // Check if the tests file already exists
+                    val testsFile = sourceFile.parent.findChild(testsFileName)
+
+                    if (testsFile != null) {
+                        //TODO  replace or create new file? show dialog
+                        
+                    } else {
+                        // Create a new file with unit tests
+                        createFileWithUnitTests(sourceFile.parent, testsFileName, unitTest)
+                        Messages.showInfoMessage("Unit tests generated successfully", "Unit Test Action")
+                    }
+                }
             }
         }
     }
 
+    private fun appendUnitTestsToFile(file: VirtualFile, unitTest: String) {
+        // Append unit tests to the existing file
+        val existingContent = String(file.contentsToByteArray())
+        val newContent = "$existingContent\n$unitTest"
+
+        file.setBinaryContent(newContent.toByteArray())
+    }
+
+    private fun createFileWithUnitTests(parentDirectory: VirtualFile, fileName: String, unitTest: String) {
+
+        // Create a new file with unit tests
+        val testsFile = parentDirectory.createChildData(this, fileName)
+        testsFile.setBinaryContent(unitTest.toByteArray())
+    }
     override fun update(event: AnActionEvent) {
         super.update(event)
 
-        val editor = CommonDataKeys.EDITOR.getData(event.dataContext)
-
-        // Check if there is an editor and there's a selection in it
-        val isTextSelected = editor?.selectionModel?.hasSelection() == true
-
-        // Enable or disable the action based on the selection
-        event.presentation.isEnabled = isTextSelected
+        val virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE)
+        event.presentation.isEnabled = isSourceCodeFileWithOneClass(virtualFile, event)
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return super.getActionUpdateThread()
+    private fun isSourceCodeFileWithOneClass(virtualFile: VirtualFile?, event: AnActionEvent): Boolean {
+        if (virtualFile == null || !virtualFile.isInLocalFileSystem) {
+            return false
+        }
+
+        // Check if it's a source code file
+        val supportedExtensions = setOf("java", "kt", "scala")
+        val fileExtension = virtualFile.extension?.lowercase()
+        if (fileExtension !in supportedExtensions) {
+            return false
+        }
+
+        // Check if the file contains exactly one class
+        val psiFile = event.getData(CommonDataKeys.PSI_FILE)
+        psiFile?.let {
+            val classes = it.children.filter { child -> child.node.elementType.toString() == "CLASS" }
+            val isExactlyOneClass = classes.size == 1
+            if (isExactlyOneClass){
+                classImplementation = classes[0].text
+                className = extractClassName(classImplementation)
+            }
+            return isExactlyOneClass
+        }
+
+        return false
+    }
+
+    private fun extractClassName(classImplementation: String): String? {
+        // Use a regular expression to extract the class name
+        val regex = Regex("class\\s+([A-Za-z_][A-Za-z0-9_]*)")
+        val matchResult = regex.find(classImplementation)
+        return matchResult?.groupValues?.get(1)
     }
 }

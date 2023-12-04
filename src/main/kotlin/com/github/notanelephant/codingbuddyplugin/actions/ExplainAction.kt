@@ -2,7 +2,6 @@ package com.github.notanelephant.codingbuddyplugin.actions
 
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory.MyToolWindow.Companion.setTextAreaText
-import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -36,9 +35,5 @@ class ExplainAction : AnAction() {
 
         // Enable or disable the action based on the selection
         event.presentation.isEnabled = isTextSelected
-    }
-
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return super.getActionUpdateThread()
     }
 }

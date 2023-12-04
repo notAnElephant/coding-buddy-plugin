@@ -8,6 +8,8 @@ import com.github.notanelephant.codingbuddyplugin.wrapper.completions.CreateComp
 import kotlin.time.Duration.Companion.seconds
 
 object ApiCall {
+        private const val MAXLENGTH = 3000
+    
         private val apiKey = requireNotNull(System.getenv("OPENAI_API_KEY")) {
             //ErrorDialog.show(currentProject, "OpenAI API key is not present or incorrect") //TODO
             "ERROR: OPENAI_API_KEY env variable not set"
@@ -21,12 +23,16 @@ object ApiCall {
         suspend fun getApiResponse(prompt: String, code: String = ""): String {
             val model = GPT3Model.DAVINCI.modelName
             val textToSend = "$prompt:\n$code"
+            if(textToSend.length > MAXLENGTH) {
+                //ErrorDialog.show(currentProject, "The code is too long") //TODO
+                return "ERROR: The code is too long"
+            }
             val createCompletionResponse =
                 openAI.createCompletion(
                     CreateCompletionRequest(
                         model = model,
                         prompt = textToSend,
-                        maxTokens = 1000,
+                        maxTokens = 3000,
                         temperature = 0.7,
                     ),
                 )
