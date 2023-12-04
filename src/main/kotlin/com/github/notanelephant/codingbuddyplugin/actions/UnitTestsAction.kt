@@ -92,13 +92,7 @@ class UnitTestsAction : AnAction() {
         if (virtualFile == null || !virtualFile.isInLocalFileSystem) {
             return false
         }
-
-        // Check if it's a source code file
-        val supportedExtensions = setOf("java", "kt", "scala")
-        val fileExtension = virtualFile.extension?.lowercase()
-        if (fileExtension !in supportedExtensions) {
-            return false
-        }
+        if (isSupportedCodeFile(virtualFile).second) return false
 
         // Check if the file contains exactly one class
         val psiFile = event.getData(CommonDataKeys.PSI_FILE)
@@ -114,11 +108,23 @@ class UnitTestsAction : AnAction() {
 
         return false
     }
+    
+    companion object{
+        fun isSupportedCodeFile(virtualFile: VirtualFile): Pair<String, Boolean> {
+            // Check if it's a source code file
+            val supportedExtensions = setOf("java", "kt", "scala")
+            val fileExtension = virtualFile.extension?.lowercase()
 
-    private fun extractClassName(classImplementation: String): String? {
-        // Use a regular expression to extract the class name
-        val regex = Regex("class\\s+([A-Za-z_][A-Za-z0-9_]*)")
-        val matchResult = regex.find(classImplementation)
-        return matchResult?.groupValues?.get(1)
+            val isSupported = fileExtension in supportedExtensions
+
+            return ".$fileExtension" to isSupported
+        }
+
+        fun extractClassName(classImplementation: String): String? {
+            // Use a regular expression to extract the class name
+            val regex = Regex("class\\s+([A-Za-z_][A-Za-z0-9_]*)")
+            val matchResult = regex.find(classImplementation)
+            return matchResult?.groupValues?.get(1)
+        }
     }
 }

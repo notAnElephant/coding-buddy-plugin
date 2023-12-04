@@ -35,7 +35,7 @@ class RefactorAction : AnAction() {
                            "If it is not refactorable because of it's length or any other reason," +
                            " just return \"cannot be refactored\". If it has basic syntax errors, e.g. " +
                            "a closing bracket is missing, DO NOT replace them, as it is probably " +
-                           "a part of a working code", it)
+                           "a part of a working code. The code: ", it)
                    
                    if(refactoredCode == "cannot be refactored"){
                        Messages.showInfoMessage("The code cannot be refactored. The selection is probably too short -" +
