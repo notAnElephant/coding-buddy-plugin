@@ -8,7 +8,7 @@ package com.github.notanelephant.codingbuddyplugin.wrapper
  * @param modelName the explicit name of the GPT-3 model
  * @param maxTokens the maximum number of tokens this model can process in one prompt
  */
-enum class GPT3Model(private val modelName: String, val maxTokens: Int) {
+enum class GPT3Model(val modelName: String, val maxTokens: Int) {
     ADA("text-ada-001", 2048),
 
     BABBAGE("text-babbage-001", 2048),
