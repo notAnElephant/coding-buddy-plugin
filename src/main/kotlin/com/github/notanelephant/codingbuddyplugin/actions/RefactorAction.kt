@@ -1,6 +1,7 @@
 package com.github.notanelephant.codingbuddyplugin.actions
 
 import com.github.notanelephant.codingbuddyplugin.ApiCall.getApiResponse
+import com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction.Companion.isSupportedCodeFile
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -62,7 +63,6 @@ class RefactorAction : AnAction() {
 
         val editor = CommonDataKeys.EDITOR.getData(event.dataContext)
 
-        // Check if there is an editor and there's a selection in it
         val isTextSelected = editor?.selectionModel?.hasSelection() == true
 
         // Enable or disable the action based on the selection

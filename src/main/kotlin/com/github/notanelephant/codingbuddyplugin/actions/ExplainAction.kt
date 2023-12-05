@@ -1,6 +1,7 @@
 package com.github.notanelephant.codingbuddyplugin.actions
 
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
+import com.github.notanelephant.codingbuddyplugin.SupportedFiles
 import com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory.MyToolWindow.Companion.setTextAreaText
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -20,9 +21,19 @@ class ExplainAction : AnAction() {
         
         val editor = CommonDataKeys.EDITOR.getData(event.dataContext)
 
-        editor?.selectionModel?.selectedText?.let {selectedText ->
-            setTextAreaText(currentProject, "Explain the given code", selectedText)
+        //if the editor has a selection, run the setTextAreaText function with the selected text
+        if(editor?.selectionModel?.selectedText != null){
+            editor.selectionModel.selectedText?.let { selectedText ->
+                setTextAreaText(currentProject, "Explain the given code", selectedText)
+            }
         }
+        //else if: run the setTextAreaText function with the virtual file text
+        else if(event.getData(CommonDataKeys.VIRTUAL_FILE)?.extension?.lowercase() in SupportedFiles.extensions){
+            event.getData(CommonDataKeys.VIRTUAL_FILE)?.let {virtualFile ->
+                setTextAreaText(currentProject, "Explain the given code", virtualFile.inputStream.bufferedReader().use { it.readText() })
+            }
+        }
+        
     }
 
     override fun update(event: AnActionEvent) {
@@ -32,8 +43,10 @@ class ExplainAction : AnAction() {
 
         // Check if there is an editor and there's a selection in it
         val isTextSelected = editor?.selectionModel?.hasSelection() == true
+        
+        val virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE)
 
         // Enable or disable the action based on the selection
-        event.presentation.isEnabled = isTextSelected
+        event.presentation.isEnabled = isTextSelected || virtualFile.let {it?.extension?.lowercase() in SupportedFiles.extensions }
     }
 }

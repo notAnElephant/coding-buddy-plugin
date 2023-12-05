@@ -2,7 +2,7 @@ package com.github.notanelephant.codingbuddyplugin.actions
 
 import com.github.notanelephant.codingbuddyplugin.ApiCall
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
-import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
+import com.github.notanelephant.codingbuddyplugin.SupportedFiles
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -13,6 +13,8 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+
+//import com.github.notanelephant.codingbuddyplugin.
 
 
 class UnitTestsAction : AnAction() {
@@ -57,7 +59,7 @@ class UnitTestsAction : AnAction() {
 
                     if (testsFile != null) {
                         //TODO  replace or create new file? show dialog
-                        
+
                     } else {
                         // Create a new file with unit tests
                         createFileWithUnitTests(sourceFile.parent, testsFileName, unitTest)
@@ -68,24 +70,17 @@ class UnitTestsAction : AnAction() {
         }
     }
 
-    private fun appendUnitTestsToFile(file: VirtualFile, unitTest: String) {
-        // Append unit tests to the existing file
-        val existingContent = String(file.contentsToByteArray())
-        val newContent = "$existingContent\n$unitTest"
-
-        file.setBinaryContent(newContent.toByteArray())
-    }
-
     private fun createFileWithUnitTests(parentDirectory: VirtualFile, fileName: String, unitTest: String) {
 
         // Create a new file with unit tests
         val testsFile = parentDirectory.createChildData(this, fileName)
         testsFile.setBinaryContent(unitTest.toByteArray())
     }
+
     override fun update(event: AnActionEvent) {
         super.update(event)
 
-        val virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE)
+        val virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE) //TODO ez már null vmilért
         event.presentation.isEnabled = isSourceCodeFileWithOneClass(virtualFile, event)
     }
 
@@ -100,7 +95,7 @@ class UnitTestsAction : AnAction() {
         psiFile?.let {
             val classes = it.children.filter { child -> child.node.elementType.toString() == "CLASS" }
             val isExactlyOneClass = classes.size == 1
-            if (isExactlyOneClass){
+            if (isExactlyOneClass) {
                 classImplementation = classes[0].text
                 className = extractClassName(classImplementation)
             }
@@ -109,14 +104,13 @@ class UnitTestsAction : AnAction() {
 
         return false
     }
-    
-    companion object{
+
+    companion object {
         fun isSupportedCodeFile(virtualFile: VirtualFile): Pair<String, Boolean> {
-            // Check if it's a source code file
-            val supportedExtensions = setOf("java", "kt", "scala")
+            // Check if it's a source code file of the supported type
             val fileExtension = virtualFile.extension?.lowercase()
 
-            val isSupported = fileExtension in supportedExtensions
+            val isSupported = fileExtension in SupportedFiles.extensions
 
             return ".$fileExtension" to isSupported
         }
