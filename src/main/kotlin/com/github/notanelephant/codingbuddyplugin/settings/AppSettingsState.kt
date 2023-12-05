@@ -3,6 +3,7 @@ package com.github.notanelephant.codingbuddyplugin.settings
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializerUtil
 
 
@@ -11,7 +12,9 @@ import com.intellij.util.xmlb.XmlSerializerUtil
  * The [State] and [Storage] annotations define the name of the data and the file name where
  * these persistent application settings are stored.
  */
-//@State(name = "org.intellij.sdk.settings.AppSettingsState", storages = Storage("SdkSettingsPlugin.xml"))
+@State(name = "com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState",
+    storages = [Storage("CodingBuddyPluginSettings.xml")]
+)
 internal class AppSettingsState : PersistentStateComponent<AppSettingsState> {
     var todoKeyword = "TODO"
     var unitTestPreferredFramework = ""

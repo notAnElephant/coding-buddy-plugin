@@ -2,6 +2,7 @@ package com.github.notanelephant.codingbuddyplugin.actions
 
 import com.github.notanelephant.codingbuddyplugin.ApiCall
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
+import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
