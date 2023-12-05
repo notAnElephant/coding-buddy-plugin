@@ -8,9 +8,6 @@ class AppSettingsConfigurable : Configurable {
 
     private var mySettingsComponent: AppSettingsComponent? = null
 
-    // A default constructor with no arguments is required because this implementation
-    // is registered in an applicationConfigurable EP
-
     @Nls(capitalization = Nls.Capitalization.Title)
     override fun getDisplayName(): String {
         return "SDK: Application Settings Example"
