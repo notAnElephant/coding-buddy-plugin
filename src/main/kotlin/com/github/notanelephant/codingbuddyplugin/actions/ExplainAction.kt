@@ -6,23 +6,21 @@ import com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import kotlinx.coroutines.DelicateCoroutinesApi
 
 
 class ExplainAction : AnAction() {
-    @OptIn(DelicateCoroutinesApi::class)
+
     override fun actionPerformed(event: AnActionEvent) {
         //get event.project as currentproject, and if it is null, show an error popup and return
         val currentProject = event.project ?: run {
             ErrorDialog.show(null, "No project found")
             return
         }
-
         
         val editor = CommonDataKeys.EDITOR.getData(event.dataContext)
 
         //if the editor has a selection, run the setTextAreaText function with the selected text
-        if(editor?.selectionModel?.selectedText != null){
+        if(editor?.selectionModel?.selectedText != null) {
             editor.selectionModel.selectedText?.let { selectedText ->
                 setTextAreaText(currentProject, "Explain the given code", selectedText)
             }

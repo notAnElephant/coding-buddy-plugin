@@ -11,12 +11,11 @@ import javax.swing.JPanel
  */
 class AppSettingsComponent {
     val panel: JPanel
-    private val myUserNameText = JBTextField()
-    private val myIdeaUserStatus = JBCheckBox("Do you use IntelliJ IDEA? ")
 
     // Added components for new settings
     private val myTodoKeywordText = JBTextField()
     private val myUnitTestFrameworkText = JBTextField()
+    private val apiKey = JBTextField("Your OpenAI API key")
 
     init {
         panel = FormBuilder.createFormBuilder()
@@ -37,4 +36,10 @@ class AppSettingsComponent {
         set(newFramework) {
             myUnitTestFrameworkText.text = newFramework
         }
+    var apiKeyText: String?
+        get() = apiKey.text
+        set(newApiKey) {
+            apiKey.text = newApiKey
+        }
+    
 }

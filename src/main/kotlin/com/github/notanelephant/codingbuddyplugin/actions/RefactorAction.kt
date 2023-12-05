@@ -1,7 +1,8 @@
 package com.github.notanelephant.codingbuddyplugin.actions
 
+import com.github.notanelephant.codingbuddyplugin.ApiCall
 import com.github.notanelephant.codingbuddyplugin.ApiCall.getApiResponse
-import com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction.Companion.isSupportedCodeFile
+import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -22,7 +23,7 @@ class RefactorAction : AnAction() {
         val editor = CommonDataKeys.EDITOR.getData(event.dataContext)
 
         editor?.selectionModel?.selectedText?.let {
-           val result = Messages.showOkCancelDialog(
+            val result = Messages.showOkCancelDialog(
                 currentProject,
                 "Are you sure you want to refactor the selected code?",
                 "Refactor Action",
@@ -31,29 +32,39 @@ class RefactorAction : AnAction() {
                 Messages.getInformationIcon()
             )
             if (result == Messages.OK) {
-               GlobalScope.launch(Dispatchers.IO) {
-                   val refactoredCode = getApiResponse("Refactor the following code. " +
-                           "If it is not refactorable because of it's length or any other reason," +
-                           " just return \"cannot be refactored\". If it has basic syntax errors, e.g. " +
-                           "a closing bracket is missing, DO NOT replace them, as it is probably " +
-                           "a part of a working code. The code: ", it)
-                   
-                   if(refactoredCode == "cannot be refactored"){
-                       Messages.showInfoMessage("The code cannot be refactored. The selection is probably " +
-                               "too short - try selecting more of it.", "Refactor Action")
-                       return@launch
-                   }
-                   // Replace the selected code in the editor
-                   ApplicationManager.getApplication().invokeLater {
-                       WriteCommandAction.runWriteCommandAction(currentProject) {
-                           editor.document.replaceString(
-                               editor.selectionModel.selectionStart,
-                               editor.selectionModel.selectionEnd,
-                               refactoredCode
-                           )
-                       }
-                   }
-               }
+                GlobalScope.launch(Dispatchers.IO) {
+                    val apiKey = try {
+                        ApiCall.getApiKey()
+                    } catch (e: Exception) {
+                        ErrorDialog.show(currentProject, "Could not get API key")
+                        return@launch
+                    }
+                    val refactoredCode = getApiResponse(
+                        apiKey, "Refactor the following code. " +
+                                "If it is not refactorable because of it's length or any other reason," +
+                                " just return \"cannot be refactored\". If it has basic syntax errors, e.g. " +
+                                "a closing bracket is missing, DO NOT replace them, as it is probably " +
+                                "a part of a working code. The code: ", it
+                    )
+
+                    if (refactoredCode == "cannot be refactored") {
+                        Messages.showInfoMessage(
+                            "The code cannot be refactored. The selection is probably " +
+                                    "too short - try selecting more of it.", "Refactor Action"
+                        )
+                        return@launch
+                    }
+                    // Replace the selected code in the editor
+                    ApplicationManager.getApplication().invokeLater {
+                        WriteCommandAction.runWriteCommandAction(currentProject) {
+                            editor.document.replaceString(
+                                editor.selectionModel.selectionStart,
+                                editor.selectionModel.selectionEnd,
+                                refactoredCode
+                            )
+                        }
+                    }
+                }
             }
         }
     }

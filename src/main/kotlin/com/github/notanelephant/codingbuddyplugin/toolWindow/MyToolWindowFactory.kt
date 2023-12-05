@@ -1,6 +1,7 @@
 package com.github.notanelephant.codingbuddyplugin.toolWindow
 
 import com.github.notanelephant.codingbuddyplugin.ApiCall
+import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.MyBundle
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -23,14 +24,14 @@ import javax.swing.JTextArea
 class MyToolWindowFactory : ToolWindowFactory {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val myToolWindow = MyToolWindow(toolWindow)
+        val myToolWindow = MyToolWindow()
         val content = ContentFactory.getInstance().createContent(myToolWindow.getContent(), null, false)
         toolWindow.contentManager.addContent(content)
     }
 
     override fun shouldBeAvailable(project: Project) = true
 
-    class MyToolWindow(toolWindow: ToolWindow) {
+    class MyToolWindow {
 
         private val textArea: JTextArea = JTextArea(MyBundle.message("placeholder" )).apply {
             lineWrap = true
@@ -49,7 +50,7 @@ class MyToolWindowFactory : ToolWindowFactory {
         
         companion object{
             @OptIn(DelicateCoroutinesApi::class)
-            fun setTextAreaText(currentProject : Project, prompt: String, selectedText: String) {
+            fun setTextAreaText(currentProject: Project, prompt: String, selectedText: String) {
                 val toolWindowId = "Coding Buddy"
                 
                 val toolWindow = ToolWindowManager.getInstance(currentProject).getToolWindow(toolWindowId)
@@ -58,13 +59,17 @@ class MyToolWindowFactory : ToolWindowFactory {
                 if (content != null && content.component is JBPanel<*>) {
                     val component = content.component as JBPanel<*>
                     component.components.forEach {
-                        println(it.javaClass)
                         if (it is JBScrollPane) {
                             val textArea = it.viewport.view as JTextArea
-
+                            val apiKey = try {
+                                ApiCall.getApiKey()
+                            } catch (e: Exception) {
+                                ErrorDialog.show(currentProject, "Could not get API key")
+                                return
+                            }
                             // perform the API call on a background thread
                             GlobalScope.launch(Dispatchers.IO) {
-                                val explanation = ApiCall.getApiResponse(prompt, selectedText)
+                                val explanation = ApiCall.getApiResponse(apiKey, prompt, selectedText)
                                 ApplicationManager.getApplication().invokeLater {
                                     textArea.text = explanation
                                 }

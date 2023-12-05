@@ -21,6 +21,7 @@ internal class AppSettingsState : PersistentStateComponent<AppSettingsState> {
         get() = field.trim().ifBlank { defaultTodoKeyword }
 
     var unitTestPreferredFramework = ""
+    var apiKey = ""
     
     override fun getState(): AppSettingsState {
         return this

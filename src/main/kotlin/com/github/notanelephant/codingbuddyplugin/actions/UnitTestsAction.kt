@@ -44,7 +44,14 @@ class UnitTestsAction : AnAction() {
         )
         if (result == Messages.OK) {
             GlobalScope.launch(Dispatchers.IO) {
+                val apiKey = try {
+                    ApiCall.getApiKey()
+                } catch (e: Exception) {
+                    ErrorDialog.show(currentProject, "Could not get API key")
+                    return@launch
+                }
                 val unitTest = ApiCall.getApiResponse(
+                    apiKey,
                     "Write unit tests for the following code${
                         if (AppSettingsState.instance.unitTestPreferredFramework.isNotBlank()) {
                             " using ${AppSettingsState.instance.unitTestPreferredFramework}"
