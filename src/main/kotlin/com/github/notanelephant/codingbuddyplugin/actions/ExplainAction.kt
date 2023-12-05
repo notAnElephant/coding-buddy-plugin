@@ -7,7 +7,6 @@ import com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.vfs.VirtualFile
 
 
 class ExplainAction : AnAction() {
@@ -21,7 +20,7 @@ class ExplainAction : AnAction() {
         val editor = CommonDataKeys.EDITOR.getData(event.dataContext)
 
         //if the editor has a selection, run the setTextAreaText function with the selected text
-        if (editor?.selectionModel?.selectedText != null) {
+        if(editor?.selectionModel?.selectedText != null) {
             editor.selectionModel.selectedText?.let { selectedText ->
                 setTextAreaTextWithApiCall(currentProject, "Explain the given code", selectedText)
             }
@@ -50,21 +49,9 @@ class ExplainAction : AnAction() {
         // Check if there is an editor and there's a selection in it
         val isTextSelected = editor?.selectionModel?.hasSelection() == true
 
+        val virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE)
+
         // Enable or disable the action based on the selection
-        event.presentation.isEnabled = isTextSelected || isProjectViewFileSupported(event)
-    }
-
-    private fun isProjectViewFileSupported(event: AnActionEvent): Boolean {
-        return getVirtualFile(event)?.let { isSupportedCodeFile(it).second } == true
-    }
-
-    private fun getVirtualFile(event: AnActionEvent): VirtualFile? {
-        return event.project?.let {
-            ProjectView.getInstance(it).currentProjectViewPane.selectedUserObjects.firstOrNull() as? VirtualFile
-        }
-    }
-
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
+        event.presentation.isEnabled = isTextSelected || virtualFile.let {it?.extension?.lowercase() in SupportedFiles.extensions }
     }
 }

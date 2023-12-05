@@ -44,7 +44,7 @@ class RefactorAction : AnAction() {
                         ErrorDialog.show(currentProject, "${e.message}, ${e.actionToTake}")
                         return@launch
                     }
-                    val refactoredCode = getApiResponse("Refactor and optimize the following code. " +
+                    val refactoredCode = getApiResponse(apiKey,"Refactor and optimize the following code. " +
                             "Remove pointless conditions, optimize loops, etc. " +
                             "If it has basic syntax errors, e.g. " +
                             "a closing bracket is missing, DO NOT replace them, as it is probably " +

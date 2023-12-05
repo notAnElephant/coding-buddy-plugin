@@ -197,11 +197,6 @@ class UnitTestsAction : AnAction() {
             val matchResult = regex.find(classImplementation)
             return matchResult?.groupValues?.get(1)
         }
-        fun getVirtualFile(event: AnActionEvent): VirtualFile? {
-            return event.getData(CommonDataKeys.VIRTUAL_FILE) ?: event.project?.let {
-                ProjectView.getInstance(it).currentProjectViewPane.selectedUserObjects.firstOrNull() as? VirtualFile
-            }
-        }
     }
     override fun getActionUpdateThread(): ActionUpdateThread {
         return ActionUpdateThread.BGT
