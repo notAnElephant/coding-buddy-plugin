@@ -5,17 +5,23 @@ import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.SupportedFiles
 import com.github.notanelephant.codingbuddyplugin.exceptions.NoApiKeyException
 import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
-import com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory.MyToolWindow.Companion.setTextAreaText
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFileFactory
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.IOException
+
 
 //import com.github.notanelephant.codingbuddyplugin.
 
@@ -23,6 +29,8 @@ import kotlinx.coroutines.launch
 class UnitTestsAction : AnAction() {
     private var classImplementation: String = ""
     private var className: String? = ""
+
+    private var virtualFile: VirtualFile? = null
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun actionPerformed(event: AnActionEvent) {
@@ -45,7 +53,7 @@ class UnitTestsAction : AnAction() {
             Messages.getInformationIcon()
         )
         if (result == Messages.OK) {
-            GlobalScope.launch(Dispatchers.IO) {
+            GlobalScope.launch(Dispatchers.EDT) {
                 val apiKey = try {
                     ApiCall.getApiKey()
                 } catch (e: NoApiKeyException) {
@@ -64,39 +72,56 @@ class UnitTestsAction : AnAction() {
                             "${className}UnitTests", classImplementation
                 )
 
-                // Get the source file's virtual file
-                val sourceFile = getVirtualFile(event)
-                if (sourceFile == null) {
+                if (virtualFile == null) {
                     ErrorDialog.show(currentProject, "No source file found")
                     return@launch
-                }
+                } 
+                else 
+                {
+                    val factory = PsiFileFactory.getInstance(currentProject)
+                    val fileType = FileTypeManager.getInstance().getFileTypeByExtension("kt")
+                   //val directory = PsiDirectoryFactory.getInstance(currentProject).
 
-                // Check if the source file is not null
-                setTextAreaText(currentProject, unitTest)
+                    val parentDirectory = virtualFile?.parent
+                    if (parentDirectory != null) {
+                        WriteCommandAction.runWriteCommandAction(currentProject) {
+                            try {
+                                factory.createFileFromText("$className" + "UnitTests.kt", fileType, unitTest)
+                                //parentDirectory.createChildData(this, "$className" + "UnitTests.kt") //TODO ormaybe this
+                                //To save the PSI file to disk, use its parent directory's PsiDirectory.add().
+                                // virtualFile?.setBinaryContent("Hello, World!".toByteArray(StandardCharsets.UTF_8)) //TODO oooor this (but unlikely)
+
+                            } catch (ex: IOException) {
+                                ex.printStackTrace()
+                            }
+                        }
+                    }
+
+                }
             }
         }
     }
 
-    private fun createFileWithUnitTests(parentDirectory: VirtualFile, fileName: String, unitTest: String) {
 
-        // Create a new file with unit tests
-        val testsFile = parentDirectory.createChildData(this, fileName)
-        testsFile.setBinaryContent(unitTest.toByteArray())
-    }
-
+    //    override fun getActionUpdateThread(): ActionUpdateThread {
+//        return ActionUpdateThread.EDT
+//    }
     override fun update(event: AnActionEvent) {
         super.update(event)
 
-        val virtualFile = getVirtualFile(event)
+        virtualFile = getVirtualFile(event)
 
         event.presentation.isEnabled = isSourceCodeFileWithOneClass(virtualFile, event)
     }
 
     private fun getVirtualFile(event: AnActionEvent): VirtualFile? {
-        return event.getData(CommonDataKeys.VIRTUAL_FILE) ?: event.project?.let {
-            ProjectView.getInstance(it).currentProjectViewPane.selectedUserObjects.firstOrNull() as? VirtualFile
+        return ReadAction.compute<VirtualFile?, Throwable> {
+            event.getData(CommonDataKeys.VIRTUAL_FILE) ?: event.project?.let {
+                ProjectView.getInstance(it).currentProjectViewPane.selectedUserObjects.firstOrNull() as? VirtualFile
+            }
         }
     }
+
 
     private fun isSourceCodeFileWithOneClass(virtualFile: VirtualFile?, event: AnActionEvent): Boolean {
         if (virtualFile == null || !virtualFile.isInLocalFileSystem) {
