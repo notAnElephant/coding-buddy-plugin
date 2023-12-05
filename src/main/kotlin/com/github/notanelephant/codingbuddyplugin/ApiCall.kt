@@ -1,5 +1,6 @@
 package com.github.notanelephant.codingbuddyplugin
 
+import com.github.notanelephant.codingbuddyplugin.exceptions.NoApiKeyException
 import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
 import com.github.notanelephant.codingbuddyplugin.wrapper.GPT3Model
 import com.github.notanelephant.codingbuddyplugin.wrapper.HttpTimeout
@@ -38,7 +39,7 @@ object ApiCall {
             System.getenv("OPENAI_API_KEY")
                 .let {
                     if (it.isNullOrEmpty()) {
-                        throw Exception("No API key found")
+                        throw NoApiKeyException("No API key found", "Please set your API key in the settings")
                     } else {
                         it
                     }

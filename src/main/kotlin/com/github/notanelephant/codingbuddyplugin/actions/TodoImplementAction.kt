@@ -4,6 +4,7 @@ import com.github.notanelephant.codingbuddyplugin.ApiCall
 import com.github.notanelephant.codingbuddyplugin.ApiCall.getApiResponse
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction.Companion.isSupportedCodeFile
+import com.github.notanelephant.codingbuddyplugin.exceptions.NoApiKeyException
 import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -29,8 +30,8 @@ class TodoImplementAction : AnAction() {
                 val todoKeyword = AppSettingsState.instance.todoKeyword
                 val apiKey = try {
                     ApiCall.getApiKey()
-                } catch (e: Exception) {
-                    ErrorDialog.show(currentProject, "Could not get API key")
+                } catch (e: NoApiKeyException) {
+                    ErrorDialog.show(currentProject, "${e.message}, ${e.actionToTake}")
                     return@launch
                 }
                 val refactoredCode = getApiResponse(

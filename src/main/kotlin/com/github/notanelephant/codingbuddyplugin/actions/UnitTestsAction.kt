@@ -3,6 +3,7 @@ package com.github.notanelephant.codingbuddyplugin.actions
 import com.github.notanelephant.codingbuddyplugin.ApiCall
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.SupportedFiles
+import com.github.notanelephant.codingbuddyplugin.exceptions.NoApiKeyException
 import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
@@ -46,8 +47,8 @@ class UnitTestsAction : AnAction() {
             GlobalScope.launch(Dispatchers.IO) {
                 val apiKey = try {
                     ApiCall.getApiKey()
-                } catch (e: Exception) {
-                    ErrorDialog.show(currentProject, "Could not get API key")
+                } catch (e: NoApiKeyException) {
+                    ErrorDialog.show(currentProject, "${e.message}, ${e.actionToTake}")
                     return@launch
                 }
                 val unitTest = ApiCall.getApiResponse(

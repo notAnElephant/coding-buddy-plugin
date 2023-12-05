@@ -3,6 +3,7 @@ package com.github.notanelephant.codingbuddyplugin.toolWindow
 import com.github.notanelephant.codingbuddyplugin.ApiCall
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.MyBundle
+import com.github.notanelephant.codingbuddyplugin.exceptions.NoApiKeyException
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
@@ -63,8 +64,8 @@ class MyToolWindowFactory : ToolWindowFactory {
                             val textArea = it.viewport.view as JTextArea
                             val apiKey = try {
                                 ApiCall.getApiKey()
-                            } catch (e: Exception) {
-                                ErrorDialog.show(currentProject, "Could not get API key")
+                            } catch (e: NoApiKeyException) {
+                                ErrorDialog.show(currentProject, "${e.message}, ${e.actionToTake}")
                                 return
                             }
                             // perform the API call on a background thread

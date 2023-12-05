@@ -1,6 +1,5 @@
 package com.github.notanelephant.codingbuddyplugin.settings
 
-import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.FormBuilder
@@ -15,7 +14,7 @@ class AppSettingsComponent {
     // Added components for new settings
     private val myTodoKeywordText = JBTextField()
     private val myUnitTestFrameworkText = JBTextField()
-    private val apiKey = JBTextField("Your OpenAI API key")
+    private val apiKey = JBTextField()
 
     init {
         panel = FormBuilder.createFormBuilder()
