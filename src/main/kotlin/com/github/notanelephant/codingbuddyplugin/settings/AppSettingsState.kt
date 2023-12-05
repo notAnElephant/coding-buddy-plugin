@@ -16,9 +16,11 @@ import com.intellij.util.xmlb.XmlSerializerUtil
     storages = [Storage("CodingBuddyPluginSettings.xml")]
 )
 internal class AppSettingsState : PersistentStateComponent<AppSettingsState> {
-    var todoKeyword = "TODO"
+    private val defaultTodoKeyword = "TODO"
+    var todoKeyword: String = defaultTodoKeyword
+        get() = field.trim().ifBlank { defaultTodoKeyword }
+
     var unitTestPreferredFramework = ""
-    var alwaysSendWholeFile = false
     
     override fun getState(): AppSettingsState {
         return this

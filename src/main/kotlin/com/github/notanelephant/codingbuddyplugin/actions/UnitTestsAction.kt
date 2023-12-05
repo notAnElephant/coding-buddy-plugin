@@ -3,11 +3,11 @@ package com.github.notanelephant.codingbuddyplugin.actions
 import com.github.notanelephant.codingbuddyplugin.ApiCall
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.SupportedFiles
+import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -45,15 +45,25 @@ class UnitTestsAction : AnAction() {
         if (result == Messages.OK) {
             GlobalScope.launch(Dispatchers.IO) {
                 val unitTest = ApiCall.getApiResponse(
-                    "Write unit tests for the following code. The class name should be " +
+                    "Write unit tests for the following code${
+                        if (AppSettingsState.instance.unitTestPreferredFramework.isNotBlank()) {
+                            " using ${AppSettingsState.instance.unitTestPreferredFramework}"
+                        } else {
+                            ""
+                        }
+                    }. The class name should be " +
                             "${className}UnitTests", classImplementation
                 )
 
                 // Get the source file's virtual file
-                val sourceFile = event.getData(LangDataKeys.VIRTUAL_FILE)
+                val sourceFile = getVirtualFile(event)
+                if(sourceFile == null){
+                    ErrorDialog.show(currentProject, "No source file found")
+                    return@launch
+                }
 
                 // Check if the source file is not null
-                sourceFile?.let {
+                sourceFile.let {
                     val testsFileName = "${className}UnitTests.${it.extension}"
 
                     // Check if the tests file already exists
@@ -83,13 +93,15 @@ class UnitTestsAction : AnAction() {
     override fun update(event: AnActionEvent) {
         super.update(event)
 
-        val virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE) ?: event.project?.let {
-            ProjectView.getInstance(it).currentProjectViewPane.selectedUserObjects.firstOrNull() as VirtualFile
-        }
+        val virtualFile = getVirtualFile(event)
         
         event.presentation.isEnabled = isSourceCodeFileWithOneClass(virtualFile, event)
     }
-
+    private fun getVirtualFile(event: AnActionEvent): VirtualFile? {
+        return event.getData(CommonDataKeys.VIRTUAL_FILE) ?: event.project?.let {
+            ProjectView.getInstance(it).currentProjectViewPane.selectedUserObjects.firstOrNull() as? VirtualFile
+        }
+    }
 
     private fun isSourceCodeFileWithOneClass(virtualFile: VirtualFile?, event: AnActionEvent): Boolean {
         if (virtualFile == null || !virtualFile.isInLocalFileSystem) {

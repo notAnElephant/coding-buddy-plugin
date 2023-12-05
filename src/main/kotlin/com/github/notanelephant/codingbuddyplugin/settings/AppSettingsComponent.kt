@@ -17,13 +17,11 @@ class AppSettingsComponent {
     // Added components for new settings
     private val myTodoKeywordText = JBTextField()
     private val myUnitTestFrameworkText = JBTextField()
-    private val myAlwaysSendWholeFileCheckBox = JBCheckBox("Always send the whole file?")
 
     init {
         panel = FormBuilder.createFormBuilder()
             .addLabeledComponent(JBLabel("Enter TODO keyword: "), myTodoKeywordText, 1, false)
             .addLabeledComponent(JBLabel("Preferred unit test framework: "), myUnitTestFrameworkText, 1, false)
-            .addComponent(myAlwaysSendWholeFileCheckBox, 1)
             .addComponentFillVertically(JPanel(), 0)
             .panel
     }
@@ -38,11 +36,5 @@ class AppSettingsComponent {
         get() = myUnitTestFrameworkText.text
         set(newFramework) {
             myUnitTestFrameworkText.text = newFramework
-        }
-
-    var alwaysSendWholeFile: Boolean
-        get() = myAlwaysSendWholeFileCheckBox.isSelected
-        set(newValue) {
-            myAlwaysSendWholeFileCheckBox.isSelected = newValue
         }
 }
