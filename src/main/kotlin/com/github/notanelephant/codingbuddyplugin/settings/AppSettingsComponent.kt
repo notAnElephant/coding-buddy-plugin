@@ -20,6 +20,7 @@ class AppSettingsComponent {
         panel = FormBuilder.createFormBuilder()
             .addLabeledComponent(JBLabel("Enter TODO keyword: "), myTodoKeywordText, 1, false)
             .addLabeledComponent(JBLabel("Preferred unit test framework: "), myUnitTestFrameworkText, 1, false)
+            .addLabeledComponent(JBLabel("Enter API key: "), apiKey, 1, false)
             .addComponentFillVertically(JPanel(), 0)
             .panel
     }
