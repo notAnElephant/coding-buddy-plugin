@@ -40,15 +40,13 @@ class RefactorAction : AnAction() {
                         ErrorDialog.show(currentProject, "${e.message}, ${e.actionToTake}")
                         return@launch
                     }
-                    val refactoredCode = getApiResponse(
-                        apiKey, "Refactor the following code. " +
-                                "If it is not refactorable because of it's length or any other reason," +
-                                " just return \"cannot be refactored\". If it has basic syntax errors, e.g. " +
-                                "a closing bracket is missing, DO NOT replace them, as it is probably " +
-                                "a part of a working code. The code: ", it
-                    )
+                    val refactoredCode = getApiResponse("Refactor and optimize the following code. " +
+                            "Remove pointless conditions, optimize loops, etc. " +
+                            "If it has basic syntax errors, e.g. " +
+                            "a closing bracket is missing, DO NOT replace them, as it is probably " +
+                            "a part of a working code", it)
 
-                    if (refactoredCode == "cannot be refactored") {
+                    if (refactoredCode.lowercase().contains("cannot be refactored")) {
                         Messages.showInfoMessage(
                             "The code cannot be refactored. The selection is probably " +
                                     "too short - try selecting more of it.", "Refactor Action"
