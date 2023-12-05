@@ -24,8 +24,12 @@ class TodoImplementAction : AnAction() {
 
         val currentProject = event.project
         val editor = CommonDataKeys.EDITOR.getData(event.dataContext)
+        
+        if(currentProject == null || editor == null) {
+            return
+        }
 
-        editor?.selectionModel?.selectedText?.let {
+        editor.selectionModel?.selectedText?.let {
             GlobalScope.launch(Dispatchers.IO) {
                 val todoKeyword = AppSettingsState.instance.todoKeyword
                 val apiKey = try {

@@ -22,8 +22,12 @@ class RefactorAction : AnAction() {
 
         val currentProject = event.project
         val editor = CommonDataKeys.EDITOR.getData(event.dataContext)
+        
+        if(currentProject == null || editor == null) {
+            return
+        }
 
-        editor?.selectionModel?.selectedText?.let {
+        editor.selectionModel.selectedText?.let {
             val result = Messages.showOkCancelDialog(
                 currentProject,
                 "Are you sure you want to refactor the selected code?",
