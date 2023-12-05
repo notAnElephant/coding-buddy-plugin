@@ -2,6 +2,7 @@ package com.github.notanelephant.codingbuddyplugin.actions
 
 import com.github.notanelephant.codingbuddyplugin.ApiCall.getApiResponse
 import com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction.Companion.isSupportedCodeFile
+import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -15,7 +16,6 @@ import kotlinx.coroutines.launch
 
 class TodoImplementAction : AnAction() {
     private var language: String = ""
-    private val todoKeyword = "TODO"
     @OptIn(DelicateCoroutinesApi::class)
     override fun actionPerformed(event: AnActionEvent) {
 
@@ -24,6 +24,7 @@ class TodoImplementAction : AnAction() {
 
         editor?.selectionModel?.selectedText?.let {
             GlobalScope.launch(Dispatchers.IO) {
+                val todoKeyword = AppSettingsState.instance.todoKeyword
                 val refactoredCode = getApiResponse(
                     "Replace the //$todoKeyword comments with their implementations. " +
                             "This is a part of a working $language code, so do not remove or add anything else. " +
@@ -54,7 +55,8 @@ class TodoImplementAction : AnAction() {
         val isTextSelected = editor?.selectionModel?.hasSelection() == true
 
         // Check if the selected text contains "TODOAI"
-        val containsTodoAi = editor?.selectionModel?.selectedText?.contains(todoKeyword) ?: false
+        val containsTodoAi =
+            editor?.selectionModel?.selectedText?.contains(AppSettingsState.instance.todoKeyword) ?: false
 
         val virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
         val isSupportedPair = isSupportedCodeFile(virtualFile)
@@ -62,7 +64,7 @@ class TodoImplementAction : AnAction() {
         isSupportedPair.first.let {
             language = it
         }
-        
+
         // Enable or disable the action based on the selection
         event.presentation.isEnabled = isTextSelected && containsTodoAi && isSupportedPair.second
     }

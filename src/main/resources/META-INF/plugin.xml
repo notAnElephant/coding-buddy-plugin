@@ -11,7 +11,8 @@
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory"
                     id="Coding Buddy" icon="AllIcons.Ide.Rating"/>
-        <annotator implementationClass="com.github.notanelephant.codingbuddyplugin.annotators.TodoAnnotator" language=""/>
+        <annotator implementationClass="com.github.notanelephant.codingbuddyplugin.annotators.TodoAnnotator"
+                   language=""/>
         <applicationService
                 serviceImplementation="com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState"/>
         <applicationConfigurable
@@ -60,18 +61,13 @@
                 compact="false">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
                           relative-to-action="com.github.notanelephant.codingbuddyplugin.editorgroupactions"/>
-                        <action id="com.github.notanelephant.codingbuddyplugin.actions.RefactorActionProjectWindow"
-                                class="com.github.notanelephant.codingbuddyplugin.actions.RefactorAction"
-                                text="Refactor Selected Code"
-                                description="Refactors the selected code">
-                        </action>
             <action id="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsActionProjectWindow"
                     class="com.github.notanelephant.codingbuddyplugin.actions.UnitTestsAction"
                     text="Generate Unit Tests"
                     description="Generates unit tests"/>
             <action id="com.github.notanelephant.codingbuddyplugin.actions.ExplainActionProjectWindow"
                     class="com.github.notanelephant.codingbuddyplugin.actions.ExplainAction"
-                    text="Explain Selected Code"
+                    text="Explain File"
                     description="Explains the selected code part"/>
         </group>
     </actions>

@@ -8,9 +8,6 @@ class AppSettingsConfigurable : Configurable {
 
     private var mySettingsComponent: AppSettingsComponent? = null
 
-    // A default constructor with no arguments is required because this implementation
-    // is registered in an applicationConfigurable EP
-
     @Nls(capitalization = Nls.Capitalization.Title)
     override fun getDisplayName(): String {
         return "SDK: Application Settings Example"
@@ -24,7 +21,6 @@ class AppSettingsConfigurable : Configurable {
     override fun isModified(): Boolean {
         val settings = AppSettingsState.instance
         var modified = mySettingsComponent?.todoKeyword != settings.todoKeyword
-        modified = modified or (mySettingsComponent?.alwaysSendWholeFile != settings.alwaysSendWholeFile)
         modified = modified or (mySettingsComponent?.unitTestPreferredFramework != settings.unitTestPreferredFramework)
         return modified
     }
@@ -33,14 +29,12 @@ class AppSettingsConfigurable : Configurable {
         val settings = AppSettingsState.instance
         settings.todoKeyword = mySettingsComponent?.todoKeyword ?: ""
         settings.unitTestPreferredFramework = mySettingsComponent?.unitTestPreferredFramework ?: ""
-        settings.alwaysSendWholeFile = mySettingsComponent?.alwaysSendWholeFile ?: false
     }
 
     override fun reset() {
         val settings = AppSettingsState.instance
         mySettingsComponent?.todoKeyword = settings.todoKeyword
         mySettingsComponent?.unitTestPreferredFramework = settings.unitTestPreferredFramework
-        mySettingsComponent?.alwaysSendWholeFile = settings.alwaysSendWholeFile
     }
 
     override fun disposeUIResources() {
