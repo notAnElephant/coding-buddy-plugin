@@ -3,6 +3,7 @@ package com.github.notanelephant.codingbuddyplugin.actions
 import com.github.notanelephant.codingbuddyplugin.ApiCall
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.SupportedFiles
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -45,7 +46,8 @@ class UnitTestsAction : AnAction() {
             GlobalScope.launch(Dispatchers.IO) {
                 val unitTest = ApiCall.getApiResponse(
                     "Write unit tests for the following code. The class name should be " +
-                            "${className}UnitTests", classImplementation)
+                            "${className}UnitTests", classImplementation
+                )
 
                 // Get the source file's virtual file
                 val sourceFile = event.getData(LangDataKeys.VIRTUAL_FILE)
@@ -62,6 +64,7 @@ class UnitTestsAction : AnAction() {
 
                     } else {
                         // Create a new file with unit tests
+                        //TODO not this way, create a new file with some api, not like this
                         createFileWithUnitTests(sourceFile.parent, testsFileName, unitTest)
                         Messages.showInfoMessage("Unit tests generated successfully", "Unit Test Action")
                     }
@@ -80,15 +83,19 @@ class UnitTestsAction : AnAction() {
     override fun update(event: AnActionEvent) {
         super.update(event)
 
-        val virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE) //TODO ez már null vmilért
+        val virtualFile = event.getData(CommonDataKeys.VIRTUAL_FILE) ?: event.project?.let {
+            ProjectView.getInstance(it).currentProjectViewPane.selectedUserObjects.firstOrNull() as VirtualFile
+        }
+        
         event.presentation.isEnabled = isSourceCodeFileWithOneClass(virtualFile, event)
     }
+
 
     private fun isSourceCodeFileWithOneClass(virtualFile: VirtualFile?, event: AnActionEvent): Boolean {
         if (virtualFile == null || !virtualFile.isInLocalFileSystem) {
             return false
         }
-        if (isSupportedCodeFile(virtualFile).second) return false
+        if (!isSupportedCodeFile(virtualFile).second) return false
 
         // Check if the file contains exactly one class
         val psiFile = event.getData(CommonDataKeys.PSI_FILE)
