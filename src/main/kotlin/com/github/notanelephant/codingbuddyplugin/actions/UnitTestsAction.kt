@@ -6,6 +6,7 @@ import com.github.notanelephant.codingbuddyplugin.SupportedFiles
 import com.github.notanelephant.codingbuddyplugin.exceptions.NoApiKeyException
 import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -105,11 +106,6 @@ class UnitTestsAction : AnAction() {
         
         event.presentation.isEnabled = isSourceCodeFileWithOneClass(virtualFile, event)
     }
-    private fun getVirtualFile(event: AnActionEvent): VirtualFile? {
-        return event.getData(CommonDataKeys.VIRTUAL_FILE) ?: event.project?.let {
-            ProjectView.getInstance(it).currentProjectViewPane.selectedUserObjects.firstOrNull() as? VirtualFile
-        }
-    }
 
     private fun isSourceCodeFileWithOneClass(virtualFile: VirtualFile?, event: AnActionEvent): Boolean {
         if (virtualFile == null || !virtualFile.isInLocalFileSystem) {
@@ -148,5 +144,13 @@ class UnitTestsAction : AnAction() {
             val matchResult = regex.find(classImplementation)
             return matchResult?.groupValues?.get(1)
         }
+        fun getVirtualFile(event: AnActionEvent): VirtualFile? {
+            return event.getData(CommonDataKeys.VIRTUAL_FILE) ?: event.project?.let {
+                ProjectView.getInstance(it).currentProjectViewPane.selectedUserObjects.firstOrNull() as? VirtualFile
+            }
+        }
+    }
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.BGT
     }
 }
