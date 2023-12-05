@@ -2,6 +2,7 @@ package com.github.notanelephant.codingbuddyplugin.actions
 
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.SupportedFiles
+import com.github.notanelephant.codingbuddyplugin.notifications.NotificationHelper
 import com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory.MyToolWindow.Companion.setTextAreaTextWithApiCall
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -13,7 +14,6 @@ class ExplainAction : AnAction() {
     override fun actionPerformed(event: AnActionEvent) {
         //get event.project as currentproject, and if it is null, show an error popup and return
         val currentProject = event.project ?: run {
-            ErrorDialog.show(null, "No project found")
             return
         }
         
@@ -31,7 +31,14 @@ class ExplainAction : AnAction() {
                 setTextAreaTextWithApiCall(currentProject, "Explain the given code", virtualFile.inputStream.bufferedReader().use { it.readText() })
             }
         }
-        
+        //else: show an error popup and return
+        else {
+            ErrorDialog.show(currentProject, "No text or file selected")
+            return
+        }
+        NotificationHelper.showNotification(
+            currentProject,
+            "Explanation has been added to the Coding Buddy tool window")
     }
 
     override fun update(event: AnActionEvent) {

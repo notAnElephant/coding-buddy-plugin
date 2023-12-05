@@ -4,10 +4,9 @@ import com.github.notanelephant.codingbuddyplugin.ApiCall
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.SupportedFiles
 import com.github.notanelephant.codingbuddyplugin.exceptions.NoApiKeyException
+import com.github.notanelephant.codingbuddyplugin.notifications.NotificationHelper
 import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
 import com.intellij.ide.projectView.ProjectView
-import com.intellij.notification.NotificationGroupManager
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -38,7 +37,6 @@ class UnitTestsAction : AnAction() {
     override fun actionPerformed(event: AnActionEvent) {
 
         val currentProject = event.project ?: run {
-            ErrorDialog.show(null, "No project found")
             return
         }
         if (className?.isBlank() == true || classImplementation.isBlank()) {
@@ -123,14 +121,9 @@ class UnitTestsAction : AnAction() {
                                 try {
                                     parentDirectory.createChildData(this, fileName)
                                         .setBinaryContent(unitTest.toByteArray())
-                                    NotificationGroupManager.getInstance()
-                                        .getNotificationGroup("Basic Notification Group")
-                                        .createNotification(
-                                            "Coding Buddy",
-                                            "Unit test file generated",
-                                            NotificationType.INFORMATION
-                                        )
-                                        .notify(currentProject)
+                                    NotificationHelper.showNotification(
+                                        currentProject,
+                                        "Unit tests for $className have been generated and saved to $fileName")
                                 } catch (ex: Exception) {
                                     ErrorDialog.show(currentProject,
                                         ex.message ?: ("Unknown error while creating the file. " +
