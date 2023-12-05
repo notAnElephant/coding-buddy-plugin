@@ -2,7 +2,7 @@ package com.github.notanelephant.codingbuddyplugin.actions
 
 import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.SupportedFiles
-import com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory.MyToolWindow.Companion.setTextAreaText
+import com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory.MyToolWindow.Companion.setTextAreaTextWithApiCall
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -22,13 +22,13 @@ class ExplainAction : AnAction() {
         //if the editor has a selection, run the setTextAreaText function with the selected text
         if(editor?.selectionModel?.selectedText != null) {
             editor.selectionModel.selectedText?.let { selectedText ->
-                setTextAreaText(currentProject, "Explain the given code", selectedText)
+                setTextAreaTextWithApiCall(currentProject, "Explain the given code", selectedText)
             }
         }
         //else if: run the setTextAreaText function with the virtual file text
         else if(event.getData(CommonDataKeys.VIRTUAL_FILE)?.extension?.lowercase() in SupportedFiles.extensions){
             event.getData(CommonDataKeys.VIRTUAL_FILE)?.let {virtualFile ->
-                setTextAreaText(currentProject, "Explain the given code", virtualFile.inputStream.bufferedReader().use { it.readText() })
+                setTextAreaTextWithApiCall(currentProject, "Explain the given code", virtualFile.inputStream.bufferedReader().use { it.readText() })
             }
         }
         

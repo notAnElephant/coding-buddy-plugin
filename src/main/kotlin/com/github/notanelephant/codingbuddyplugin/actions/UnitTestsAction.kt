@@ -5,6 +5,7 @@ import com.github.notanelephant.codingbuddyplugin.ErrorDialog
 import com.github.notanelephant.codingbuddyplugin.SupportedFiles
 import com.github.notanelephant.codingbuddyplugin.exceptions.NoApiKeyException
 import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
+import com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory.MyToolWindow.Companion.setTextAreaText
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -65,28 +66,13 @@ class UnitTestsAction : AnAction() {
 
                 // Get the source file's virtual file
                 val sourceFile = getVirtualFile(event)
-                if(sourceFile == null){
+                if (sourceFile == null) {
                     ErrorDialog.show(currentProject, "No source file found")
                     return@launch
                 }
 
                 // Check if the source file is not null
-                sourceFile.let {
-                    val testsFileName = "${className}UnitTests.${it.extension}"
-
-                    // Check if the tests file already exists
-                    val testsFile = sourceFile.parent.findChild(testsFileName)
-
-                    if (testsFile != null) {
-                        //TODO  replace or create new file? show dialog
-
-                    } else {
-                        // Create a new file with unit tests
-                        //TODO not this way, create a new file with some api, not like this
-                        createFileWithUnitTests(sourceFile.parent, testsFileName, unitTest)
-                        Messages.showInfoMessage("Unit tests generated successfully", "Unit Test Action")
-                    }
-                }
+                setTextAreaText(currentProject, unitTest)
             }
         }
     }
@@ -102,9 +88,10 @@ class UnitTestsAction : AnAction() {
         super.update(event)
 
         val virtualFile = getVirtualFile(event)
-        
+
         event.presentation.isEnabled = isSourceCodeFileWithOneClass(virtualFile, event)
     }
+
     private fun getVirtualFile(event: AnActionEvent): VirtualFile? {
         return event.getData(CommonDataKeys.VIRTUAL_FILE) ?: event.project?.let {
             ProjectView.getInstance(it).currentProjectViewPane.selectedUserObjects.firstOrNull() as? VirtualFile
