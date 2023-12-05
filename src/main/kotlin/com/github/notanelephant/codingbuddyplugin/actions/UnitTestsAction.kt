@@ -6,21 +6,21 @@ import com.github.notanelephant.codingbuddyplugin.SupportedFiles
 import com.github.notanelephant.codingbuddyplugin.exceptions.NoApiKeyException
 import com.github.notanelephant.codingbuddyplugin.settings.AppSettingsState
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.notification.NotificationGroupManager
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.EDT
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.util.ProgressWindow
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFileFactory
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 
 //import com.github.notanelephant.codingbuddyplugin.
@@ -29,6 +29,8 @@ import java.io.IOException
 class UnitTestsAction : AnAction() {
     private var classImplementation: String = ""
     private var className: String? = ""
+    private var language: String = ""
+    private var testFilePostFix = "UnitTests"
 
     private var virtualFile: VirtualFile? = null
 
@@ -53,59 +55,97 @@ class UnitTestsAction : AnAction() {
             Messages.getInformationIcon()
         )
         if (result == Messages.OK) {
-            GlobalScope.launch(Dispatchers.EDT) {
+            ProgressManager.getInstance().runProcess({
                 val apiKey = try {
                     ApiCall.getApiKey()
                 } catch (e: NoApiKeyException) {
                     ErrorDialog.show(currentProject, "${e.message}, ${e.actionToTake}")
-                    return@launch
+                    return@runProcess
                 }
-                val unitTest = ApiCall.getApiResponse(
-                    apiKey,
-                    "Write unit tests for the following code${
-                        if (AppSettingsState.instance.unitTestPreferredFramework.isNotBlank()) {
-                            " using ${AppSettingsState.instance.unitTestPreferredFramework}"
-                        } else {
-                            ""
-                        }
-                    }. The class name should be " +
-                            "${className}UnitTests", classImplementation
-                )
+                val indicator = ProgressManager.getInstance().progressIndicator
+                indicator.text = "Activity text"
+                indicator.fraction = 0.5 // Activity percentage
 
-                if (virtualFile == null) {
-                    ErrorDialog.show(currentProject, "No source file found")
-                    return@launch
-                } 
-                else 
-                {
-                    val factory = PsiFileFactory.getInstance(currentProject)
-                    val fileType = FileTypeManager.getInstance().getFileTypeByExtension("kt")
-                   //val directory = PsiDirectoryFactory.getInstance(currentProject).
 
-                    val parentDirectory = virtualFile?.parent
-                    if (parentDirectory != null) {
-                        WriteCommandAction.runWriteCommandAction(currentProject) {
-                            try {
-                                factory.createFileFromText("$className" + "UnitTests.kt", fileType, unitTest)
-                                //parentDirectory.createChildData(this, "$className" + "UnitTests.kt") //TODO ormaybe this
-                                //To save the PSI file to disk, use its parent directory's PsiDirectory.add().
-                                // virtualFile?.setBinaryContent("Hello, World!".toByteArray(StandardCharsets.UTF_8)) //TODO oooor this (but unlikely)
+                // perform the API call on a background thread
+                CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+                    var unitTest = ApiCall.getApiResponse(
+                        apiKey,
+                        "Write unit tests for the following code${
+                            if (AppSettingsState.instance.unitTestPreferredFramework.isNotBlank()) {
+                                " using ${AppSettingsState.instance.unitTestPreferredFramework}"
+                            } else {
+                                ""
+                            }
+                        }. The class name should be " +
+                                "${className}${testFilePostFix}", classImplementation
+                    )
+                    if (virtualFile == null) {
+                        ErrorDialog.show(currentProject, "No source file found")
+                        return@launch
+                    } else {
+                        val parentDirectory = virtualFile?.parent
+                        if (parentDirectory != null) {
+                            WriteCommandAction.runWriteCommandAction(currentProject) {
+                                var fileName = "$className" + "$testFilePostFix$language"
+                                val existingFile = parentDirectory.findChild(fileName)
 
-                            } catch (ex: IOException) {
-                                ex.printStackTrace()
+                                if (existingFile != null) {
+                                    val overwrite = Messages.showYesNoDialog(
+                                        currentProject,
+                                        "File $fileName already exists. Do you want to overwrite it?",
+                                        "File Exists",
+                                        Messages.getQuestionIcon()
+                                    ) == Messages.YES
+
+                                    if (!overwrite) {
+                                        val newFileName = Messages.showInputDialog(
+                                            currentProject,
+                                            "Enter a new file (and class) name:",
+                                            "New File And Class Name",
+                                            Messages.getQuestionIcon()
+                                        )
+
+                                        fileName = if (!newFileName.isNullOrBlank()) {
+                                            //if the file name doesn't end with the language extension, add it
+                                            if (!newFileName.endsWith(language)) {
+                                                "$newFileName$language"
+                                            } else {
+                                                newFileName
+                                            }
+                                        } else {
+                                            return@runWriteCommandAction
+                                        }
+                                        //replace class name in unittest with the new filename (without the extension)
+                                        unitTest = unitTest.replace(className!!+testFilePostFix, newFileName.removeSuffix(language))
+                                    }
+                                }
+                                try {
+                                    parentDirectory.createChildData(this, fileName)
+                                        .setBinaryContent(unitTest.toByteArray())
+                                    NotificationGroupManager.getInstance()
+                                        .getNotificationGroup("Basic Notification Group")
+                                        .createNotification(
+                                            "Coding Buddy",
+                                            "Unit test file generated",
+                                            NotificationType.INFORMATION
+                                        )
+                                        .notify(currentProject)
+                                } catch (ex: Exception) {
+                                    ErrorDialog.show(currentProject,
+                                        ex.message ?: ("Unknown error while creating the file. " +
+                                                "Please make sure the file you're trying to create isn't open.")
+                                    )
+                                    ex.printStackTrace()
+                                }
                             }
                         }
                     }
-
                 }
-            }
+            }, ProgressWindow(true, currentProject))
         }
     }
 
-
-    //    override fun getActionUpdateThread(): ActionUpdateThread {
-//        return ActionUpdateThread.EDT
-//    }
     override fun update(event: AnActionEvent) {
         super.update(event)
 
@@ -127,7 +167,10 @@ class UnitTestsAction : AnAction() {
         if (virtualFile == null || !virtualFile.isInLocalFileSystem) {
             return false
         }
-        if (!isSupportedCodeFile(virtualFile).second) return false
+        val isSupportedPair = isSupportedCodeFile(virtualFile)
+        if (!isSupportedPair.second) return false
+
+        language = isSupportedPair.first
 
         // Check if the file contains exactly one class
         val psiFile = event.getData(CommonDataKeys.PSI_FILE)

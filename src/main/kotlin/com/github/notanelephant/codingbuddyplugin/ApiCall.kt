@@ -28,7 +28,7 @@ object ApiCall {
                 CreateCompletionRequest(
                     model = model.modelName,
                     prompt = textToSend,
-                    maxTokens = model.maxTokens,
+                    maxTokens = 3000,
                     temperature = 0.0,
                 ),
             )

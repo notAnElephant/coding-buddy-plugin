@@ -20,6 +20,9 @@
                 instance="com.github.notanelephant.codingbuddyplugin.settings.AppSettingsConfigurable"
                 id="com.github.notanelephant.codingbuddyplugin.settings.AppSettingsConfigurable"
                 displayName="Coding Buddy"/>
+        <notificationGroup id="Basic Notification Group"
+                           displayType="BALLOON"
+                           key="basic.notification.group"/>
     </extensions>
     <actions>
         <!--        In-file actions-->
