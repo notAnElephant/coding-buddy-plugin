@@ -10,9 +10,8 @@ import com.intellij.psi.PsiElement
 
 class TodoAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        holder.newAnnotation(HighlightSeverity.WARNING, "Invalid code") // or HighlightSeverity.ERROR
-            //.withFix( MyFix(element))
-            .create();
+        holder.newAnnotation(HighlightSeverity.WARNING, "Invalid code")
+            .create()
         if (element is PsiComment) {
             val text = element.text
             if (text.contains("//TODO")) {

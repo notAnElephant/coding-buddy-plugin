@@ -17,7 +17,6 @@ import com.intellij.openapi.progress.util.ProgressWindow
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -33,7 +32,7 @@ class UnitTestsAction : AnAction() {
 
     private var virtualFile: VirtualFile? = null
 
-    @OptIn(DelicateCoroutinesApi::class)
+
     override fun actionPerformed(event: AnActionEvent) {
 
         val currentProject = event.project ?: run {

@@ -29,7 +29,7 @@ class TodoImplementAction : AnAction() {
             return
         }
 
-        editor.selectionModel?.selectedText?.let {
+        editor.selectionModel.selectedText?.let {
             GlobalScope.launch(Dispatchers.IO) {
                 val todoKeyword = AppSettingsState.instance.todoKeyword
                 val apiKey = try {
