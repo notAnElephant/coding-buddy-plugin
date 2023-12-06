@@ -8,7 +8,7 @@ class AppSettingsConfigurable : Configurable {
     private var mySettingsComponent: AppSettingsComponent? = null
 
     override fun getDisplayName(): String {
-        return "SDK: Application Settings Example"
+        return "Coding Buddy Settings"
     }
 
     override fun createComponent(): JComponent? {
