@@ -3,10 +3,11 @@
 ![Build](https://github.com/notAnElephant/coding-buddy-plugin/workflows/Build/badge.svg)
 [![Version](https://img.shields.io/jetbrains/plugin/v/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/PLUGIN_ID)
-
+<!-- Plugin description -->
 ## Description
 
 A PoC plugin for IntelliJ IDEA that helps you to code faster, leveraging the astounding power of AI.
+<!-- Plugin description end -->
 
 ## Installation
 
