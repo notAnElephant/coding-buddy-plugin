@@ -14,7 +14,7 @@ object ApiCall {
     private val model = GPT3Model.DAVINCI
     private const val TOKENTOCHAR = 4  //it is a rule of thumb by OpenAI that 1 token is 4 characters
 
-    suspend fun getApiResponse(apiKey: String, prompt: String, code: String = ""): String {
+    suspend fun getApiResponse(apiKey: String, prompt: String, code: String): String {
         val openAI = OpenAIClient(OpenAIClientConfig(
             apiKey,
             HttpTimeout(request = 60.seconds),
