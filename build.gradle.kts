@@ -19,7 +19,7 @@ group = properties("pluginGroup").get()
 version = properties("pluginVersion").get()
 
 val ktorVersion = "2.3.5"
-val okioVersion = "3.6.0"
+val okioVersion = "3.7.0"
 val okhttpVersion = "4.11.0"
 
 val kotlinVersion: String by project
