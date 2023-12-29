@@ -45,7 +45,7 @@ dependencies {
     implementation("com.squareup.okio:okio:$okioVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     
-    implementation("org.slf4j:slf4j-simple:2.0.6")
+    implementation("org.slf4j:slf4j-simple:2.0.10")
 }
 
 // Set the JVM language level used to build the project. Use Java 11 for 2020.3+, and Java 17 for 2022.2+.
