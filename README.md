@@ -1,8 +1,8 @@
 # Coding Buddy
 
 ![Build](https://github.com/notAnElephant/coding-buddy-plugin/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/22894)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/PLUGIN_ID.svg)](https://plugins.jetbrains.com/plugin/22894)
+[![Version](https://img.shields.io/jetbrains/plugin/v/22894.svg)](https://plugins.jetbrains.com/plugin/22894)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/22894.svg)](https://plugins.jetbrains.com/plugin/22894)
 <!-- Plugin description -->
 ## Description
 
