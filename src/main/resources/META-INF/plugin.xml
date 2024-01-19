@@ -8,6 +8,17 @@
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
+    <description><![CDATA[
+A PoC plugin for IntelliJ IDEA that helps you to code faster, leveraging the astounding power of AI. Requires an OpenAI API key to work.
+The plugin includes 4 possible actions:
+<ul>
+  <li>Refactoring code</li>
+  <li>Generating unit tests</li>
+  <li>Implementing TODO comments</li>
+  <li>Explaining existing code</li>
+</ul>
+]]></description>
+
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow factoryClass="com.github.notanelephant.codingbuddyplugin.toolWindow.MyToolWindowFactory"
                     id="Coding Buddy" icon="AllIcons.Ide.Rating"/>
