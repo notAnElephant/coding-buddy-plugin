@@ -17,6 +17,13 @@ The plugin includes 4 possible actions:
   <li>Implementing TODO comments</li>
   <li>Explaining existing code</li>
 </ul>
+
+Usage: 
+(Before using the plugin, you need to set up your OpenAI API key in the plugin settings.)
+<ul>
+  <li>Refactoring code, Generating unit tests and Implementing TODO comments: select code, right click, and select Coding Buddy, then the desired action</li>
+  <li>Generating unit tests - select file or right click in a class file, select Coding Buddy/Generating Unit Tests</li>
+</ul>
 ]]></description>
 
     <extensions defaultExtensionNs="com.intellij">
